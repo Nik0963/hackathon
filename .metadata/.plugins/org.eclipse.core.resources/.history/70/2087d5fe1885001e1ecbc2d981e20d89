@@ -1,0 +1,24 @@
+package com.app;
+
+public class UserDao extends Dao {
+
+	public UserDao() throws Exception {
+		super();
+	}
+	
+	public int save(Users u) throws Exception {
+		String sql = "INSERT INTO users VALUES(default, ?, ?, ?, ?, ?, ?, ?)";
+		try(PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setString(1, u.getFirstName());
+			stmt.setString(2, u.getLastName());
+			stmt.setString(3, u.getEmail());
+			stmt.setString(4, u.getPassword());
+			stmt.setDate(5, DateUtil.utilToSqlDate(u.getBirth()));
+			stmt.setBoolean(6, u.getStatus());
+			stmt.setString(7, u.getRole().toString());
+			int count = stmt.executeUpdate();
+			return count;
+		} //stmt.close();
+	}
+
+}

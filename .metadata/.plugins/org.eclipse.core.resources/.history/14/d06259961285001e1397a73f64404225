@@ -1,0 +1,9 @@
+package com.app;
+
+import java.util.Date;
+
+public class Movies {
+	private int movieId;
+	private String title;
+	private Date releaseDate;
+}

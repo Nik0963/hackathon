@@ -1,0 +1,10 @@
+package com.app;
+
+public class UserDao extends Dao {
+
+	protected UserDao() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+}
