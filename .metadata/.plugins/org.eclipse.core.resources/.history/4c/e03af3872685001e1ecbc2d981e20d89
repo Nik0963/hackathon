@@ -1,0 +1,33 @@
+package com.app;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MovieDao extends Dao {
+
+	public MovieDao() throws Exception {
+		super();
+	}
+
+	public List<Movies> displayAllMovies() throws Exception {
+		List<Movies> list = new ArrayList<>();
+		String sql = "SELECT * FROM candidates";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("id");
+					String name = rs.getString("name");
+					String party = rs.getString("party");
+					int votes = rs.getInt("votes");
+					Movies m = new Movies(id, name, party, votes);
+					list.add(m);
+				}
+			} // rs.close();
+		} // stmt.close();
+		return list;
+
+	}
+
+}

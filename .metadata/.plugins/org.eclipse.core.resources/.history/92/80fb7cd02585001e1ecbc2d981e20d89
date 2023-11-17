@@ -1,0 +1,9 @@
+package com.app;
+
+public class MovieDao extends Dao{
+
+	public MovieDao() throws Exception {
+		super();
+	}
+
+}
