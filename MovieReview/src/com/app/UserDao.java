@@ -30,12 +30,12 @@ public class UserDao extends Dao {
 			stmt.setString(1, email);
 			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
-					int id = rs.getInt("id");
+					int id = rs.getInt("user_id");
 					String fname = rs.getString("first_name");
 					String lname = rs.getString("last_name");
 					String password = rs.getString("password");
 					String mobile = rs.getString("mobile");
-					Date uDate = DateUtil.sqlToUtilDate(rs.getDate("dob"));
+					Date uDate = DateUtil.sqlToUtilDate(rs.getDate("birth"));
 					return new Users(id, fname, lname, email, password, mobile, uDate);
 				}
 			} // rs.close();
@@ -45,7 +45,7 @@ public class UserDao extends Dao {
 
 	public int editProfile(Users u) throws Exception {
 
-		String sql = "UPDATE users SET first_name = ?,last_name=?,mobile=?,dob=? WHERE id=?";
+		String sql = "UPDATE users SET first_name = ?,last_name=?,mobile=?,birth=? WHERE user_id=?";
 		try (PreparedStatement stmt = con.prepareStatement(sql)) {
 			stmt.setString(1, u.getfName());
 			stmt.setString(2, u.getlName());
@@ -59,7 +59,7 @@ public class UserDao extends Dao {
 	}
 
 	public int changePassword(Users u) throws Exception {
-		String sql = "UPDATE users SET password = ? WHERE id =? ";
+		String sql = "UPDATE users SET password = ? WHERE user_id =? ";
 		try (PreparedStatement stmt = con.prepareStatement(sql)) {
 			stmt.setString(1, u.getPassword());
 			stmt.setInt(2, u.getUserId());

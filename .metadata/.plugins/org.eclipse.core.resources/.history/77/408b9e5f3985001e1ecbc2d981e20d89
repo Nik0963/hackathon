@@ -1,0 +1,145 @@
+package com.app;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class ReviewDao extends Dao {
+
+	protected ReviewDao() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public int saveReview(Reviews r) throws Exception {
+		String sql = "INSERT INTO reviews VALUES(default, ?,?,CURRENT_TIMESTAMP,?,?)";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setString(1, r.getReview());
+			stmt.setInt(2, r.getRating());
+			stmt.setInt(3, r.getUserId());
+			stmt.setInt(4, r.getMovieId());
+			int count = stmt.executeUpdate();
+			return count;
+		} // stmt.close();
+	}
+
+	public int editReview(Reviews r) throws Exception {
+		String sql = "UPDATE reviews SET rating =? , review=? WHERE id=?";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setInt(1, r.getRating());
+			stmt.setString(2, r.getReview());
+			stmt.setInt(3, r.getReviewId());
+			int count = stmt.executeUpdate();
+			return count;
+		} // stmt.close();
+	}
+
+	public int deleteById(int id) throws Exception {
+		String sql = "DELETE FROM reviews WHERE id=?";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			int cnt = stmt.executeUpdate();
+			return cnt;
+		} // stmt.close();
+	}
+
+	public Reviews displayReviewbyId(int review_id) throws Exception {
+		String sql = "SELECT * FROM reviews where review_id=?";
+		Reviews result = null;
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setInt(1, review_id);
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int review_id1 = rs.getInt("review_id");
+					String review = rs.getString("review");
+					int rating = rs.getInt("rating");
+					Date modified = DateUtil.sqlToUtilDate(rs.getDate("modified"));
+					int user_id = rs.getInt("user_id");
+					int movie_id = rs.getInt("movie_id");
+					result = new Reviews(review_id1, movie_id, review, rating, user_id, modified);
+				}
+				return result;
+			} // rs.close();
+		} // stmt.close();
+	}
+
+	public List<Reviews> displayAllReviews() throws Exception {
+		List<Reviews> allReviews = new ArrayList<>();
+		String sql = "SELECT * FROM reviews";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("review_id");
+					String review = rs.getString("review");
+					int rating = rs.getInt("rating");
+					Date modified = DateUtil.sqlToUtilDate(rs.getDate("modified"));
+					int user_id = rs.getInt("user_id");
+					int movie_id = rs.getInt("movie_id");
+					allReviews.add(new Reviews(id, movie_id, review, rating, user_id, modified));
+				}
+
+			} // rs.close();
+		} // stmt.close();
+		return allReviews;
+	}
+
+	public List<Reviews> displayMyReviews(int user_id) throws Exception {
+		List<Reviews> myReviews = new ArrayList<>();
+		String sql = "SELECT * FROM reviews where user_id=?";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			stmt.setInt(1, user_id);
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("review_id");
+					String review = rs.getString("review");
+					int rating = rs.getInt("rating");
+					Date modified = DateUtil.sqlToUtilDate(rs.getDate("modified"));
+					int user_id1 = rs.getInt("user_id");
+					int movie_id = rs.getInt("movie_id");
+					myReviews.add(new Reviews(id, movie_id, review, rating, user_id1, modified));
+				}
+
+			} // rs.close();
+		} // stmt.close();
+		return myReviews;
+	}
+
+	public List<Reviews> displayReviewsSharedWithMe(int user_id) throws Exception {
+		List<Integer> reviewIds = new ArrayList<>();
+		String sql1 = "SELECT review_id FROM shares where user_id=?";
+		try (PreparedStatement stmt = con.prepareStatement(sql1)) {
+			stmt.setInt(1, user_id);
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("review_id");
+					reviewIds.add(id);
+				}
+
+			} // rs.close();
+		} // stmt.close();
+		List<Reviews> myReviews = new ArrayList<>();
+		String sql2 = "SELECT * FROM reviews where review_id=?";
+		Reviews result = null;
+		try (PreparedStatement stmt = con.prepareStatement(sql2)) {
+			for (int i = 0; i < reviewIds.size(); i++) {
+				stmt.setInt(1, reviewIds.get(i));
+				try (ResultSet rs = stmt.executeQuery()) {
+					while (rs.next()) {
+						int review_id1 = rs.getInt("review_id");
+						String review = rs.getString("review");
+						int rating = rs.getInt("rating");
+						Date modified = DateUtil.sqlToUtilDate(rs.getDate("modified"));
+						int user_id1 = rs.getInt("user_id");
+						int movie_id = rs.getInt("movie_id");
+						myReviews.add(new Reviews(review_id1, movie_id, review, rating, user_id1, modified));
+					}
+					
+				} // rs.close();
+			}
+		} // stmt.close();
+		return myReviews;
+	}
+}

@@ -6,6 +6,7 @@ import java.util.Scanner;
 import com.app.DateUtil;
 import com.app.MovieDao;
 import com.app.Movies;
+import com.app.ReviewDao;
 import com.app.UserDao;
 import com.app.Users;
 
@@ -43,17 +44,20 @@ public class TestApp {
 			switch (choice) {
 			case 0: // Log out
 				System.out.println("Bye!");
+				curUser = null;
 				break;
 			case 1: // Edit Profile
-
+				editProfile(curUser);
 				break;
 			case 2: // Change Password
+				changePassword(curUser);
 				break;
 			case 3: // Write Review
 				break;
 			case 4: // Edit Review
 				break;
 			case 5: // Display All Movies
+				displayAllMovies();
 				break;
 			case 6: // Display all reviews
 				break;
@@ -118,9 +122,22 @@ public class TestApp {
 	}
 
 	public static void editProfile(Users user) {
+		System.out.println("Enter first name: ");
+		String fname = sc.next();
+		System.out.println("Enter last name: ");
+		String lname = sc.next();
+		System.out.println("Enter mobile: ");
+		String mobile = sc.next();
+		System.out.println("Enter birthdate: ");
+		String birth = sc.next();
+		user.setfName(fname);
+		user.setlName(lname);
+		user.setMobile(mobile);
+		user.setDob(DateUtil.parse(birth));
 		try (UserDao dao = new UserDao()) {
 			int count = dao.editProfile(user);
 			System.out.println("Rows affetcted: " + count);
+			System.out.println("Profile edit succesfull!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,16 +145,28 @@ public class TestApp {
 
 	public static void changePassword(Users user) {
 
+		System.out.println("Enter new password: ");
+		String password = sc.next();
+		user.setPassword(password);
 		try (UserDao dao = new UserDao()) {
 			int count = dao.changePassword(user);
 			System.out.println("Rows affected: " + count);
+			System.out.println("Password change succesfull!");
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void createReview() {
+		try(ReviewDao dao = new ReviewDao()){
+			
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) {
-
+		userOperations();
 	}
 
 }
