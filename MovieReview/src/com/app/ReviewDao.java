@@ -2,7 +2,6 @@ package com.app;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,6 @@ public class ReviewDao extends Dao {
 
 	public ReviewDao() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int saveReview(Reviews r) throws Exception {
@@ -27,7 +25,7 @@ public class ReviewDao extends Dao {
 	}
 
 	public int editReview(Reviews r) throws Exception {
-		String sql = "UPDATE reviews SET rating =? , review=? WHERE id=?";
+		String sql = "UPDATE reviews SET rating =? , review=? WHERE review_id=?";
 		try (PreparedStatement stmt = con.prepareStatement(sql)) {
 			stmt.setInt(1, r.getRating());
 			stmt.setString(2, r.getReview());
@@ -38,7 +36,7 @@ public class ReviewDao extends Dao {
 	}
 
 	public int deleteById(int id) throws Exception {
-		String sql = "DELETE FROM reviews WHERE id=?";
+		String sql = "DELETE FROM reviews WHERE review_id=?";
 		try (PreparedStatement stmt = con.prepareStatement(sql)) {
 			stmt.setInt(1, id);
 			int cnt = stmt.executeUpdate();
@@ -122,7 +120,7 @@ public class ReviewDao extends Dao {
 		} // stmt.close();
 		List<Reviews> myReviews = new ArrayList<>();
 		String sql2 = "SELECT * FROM reviews where review_id=?";
-		Reviews result = null;
+		// Reviews result = null;
 		try (PreparedStatement stmt = con.prepareStatement(sql2)) {
 			for (int i = 0; i < reviewIds.size(); i++) {
 				stmt.setInt(1, reviewIds.get(i));
@@ -136,7 +134,7 @@ public class ReviewDao extends Dao {
 						int movie_id = rs.getInt("movie_id");
 						myReviews.add(new Reviews(review_id1, movie_id, review, rating, user_id1, modified));
 					}
-					
+
 				} // rs.close();
 			}
 		} // stmt.close();

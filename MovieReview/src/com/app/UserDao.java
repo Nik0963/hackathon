@@ -2,12 +2,37 @@ package com.app;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class UserDao extends Dao {
 
 	public UserDao() throws Exception {
 		super();
+	}
+
+	public List<Users> displayAllUsers() throws Exception {
+		List<Users> list = new ArrayList<Users>();
+		String sql = "SELECT * FROM users";
+		try (PreparedStatement stmt = con.prepareStatement(sql)) {
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+
+					int id = rs.getInt("user_id");
+					String fname = rs.getString("first_name");
+					String lname = rs.getString("last_name");
+					String email = rs.getString("email");
+					String mobile = rs.getString("mobile");
+					Date uDate = DateUtil.sqlToUtilDate(rs.getDate("birth"));
+					Users user = new Users(id, fname, lname, email, "****", mobile, uDate);
+					list.add(user);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	public int save(Users u) throws Exception {
